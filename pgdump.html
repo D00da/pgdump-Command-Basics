@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <title>pg_dump Command Basics</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1><img src="pgadmin.png" class="image"> pg_dump Command Basics</h1>
+
+  <div class="section">
+    <h2>What is pg_dump?</h2>
+    <p><code>pg_dump</code> is a utility for creating backups of PostgreSQL databases. It allows you to export the database schema and data into various formats.</p>
+    <p class="note">You can use pg_dump to back up your PostgreSQL database, and then restore it using <code>pg_restore</code> or <code>psql</code>.</p>
+  </div>
+
+  <div class="section">
+    <h2>Basic Syntax</h2>
+    <div class="terminal">
+    pg_dump [options] dbname
+    </div>
+    <p class="note">Where:</p>
+    <ul class="topics">
+      <li><b>dbname</b>: The name of the database you want to back up.</li>
+      <li><b>[options]</b>: Optional flags that control the behavior of the dump (e.g., user, host, format).</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Commonly Used Options</h2>
+    <div class="terminal">
+      -U username   # Specifies the PostgreSQL username
+      -h hostname   # Specifies the host where the database server is running
+      -p port       # Specifies the port (default: 5432)
+      -F format     # Specifies the output format 
+        > p (plain text SQL script)
+        > c (custom format, which is compressed and can be restored with <code>pg_restore</code>)
+        > t (tar format, can also be restored with <code>pg_restore</code>)
+        > d (directory format, useful for large databases and parallel restores)
+      -f filename   # Specifies the output file
+      -v            # Verbose mode
+      -C            # Includes CREATE DATABASE statement in the dump
+      -s            # Dump only the schema (no data)
+      -a            # Dump only the data (no schema)
+      -t table      # Dump a specific table
+    </div>
+    <p class="note">The most common options are:</p>
+    <ul class="topics">
+      <li><b>U</b>: Specify the PostgreSQL username</li>
+      <li><b>h</b>: Specify the database server hostname</li>
+      <li><b>F</b>: Choose the output format (e.g., <code>c</code> for custom format)</li>
+      <li><b>f</b>: Specify the backup file output path</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <h2>Examples</h2>
+    <p class="note">Here are some example commands to create backups:</p>
+
+    <div class="terminal">
+      pg_dump -U postgres -h localhost mydb > mydb_backup.sql
+    </div>
+    <p>This creates a plain-text SQL dump of the `mydb` database.</p>
+
+    <div class="terminal">
+      pg_dump -U postgres -h localhost -F c -b -v -f mydb_backup.tar mydb
+    </div>
+    <p>This creates a compressed custom-format backup of the `mydb` database.</p>
+
+    <div class="terminal">
+      pg_dump -U postgres -h localhost -s mydb > mydb_schema.sql
+    </div>
+    <p>This dumps only the schema (no data) from the `mydb` database.</p>
+
+    <div class="terminal">
+      pg_dump -U postgres -h localhost -a mydb > mydb_data.sql
+    </div>
+    <p>This dumps only the data (no schema) from the `mydb` database.</p>
+  </div>
+
+  <div class="section">
+    <h2>Restoring a Backup</h2>
+    <p>To restore a backup, you can use the following commands:</p>
+    <div class="terminal">
+      psql -U postgres -h localhost -d targetdb -f mydb_backup.sql
+    </div>
+    <p>If you used a custom/tar directory format:</p>
+    <div class="terminal">
+      pg_restore -U postgres -h localhost -d targetdb -v mydb_backup.tar
+    </div>
+  </div>
+
+</body>
+</html>
